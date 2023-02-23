@@ -27,6 +27,5 @@ public class CustomerController {
     @PutMapping
     public ResponseEntity<Customer> saveCustomer(@RequestBody final Customer customer){
         return ResponseEntity.ok(customerService.saveCustomer(customer));
-
     }
 }

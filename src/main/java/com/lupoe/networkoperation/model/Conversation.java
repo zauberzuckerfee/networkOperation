@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,6 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Getter
 @Setter
-@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Conversation {
@@ -34,6 +32,12 @@ public class Conversation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
+
+    public Conversation(final LocalDateTime startTime, final LocalDateTime endTime, final Customer customer) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.customer = customer;
+    }
 
     private long getDuration(){
         return ChronoUnit.MINUTES.between(startTime, endTime);

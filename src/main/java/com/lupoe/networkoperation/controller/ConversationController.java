@@ -23,10 +23,10 @@ public class ConversationController {
     private final ConversationService conversationService;
     private final CustomerService customerService;
 
-    @GetMapping("/startCall/{id}")
-    public ResponseEntity<Conversation> startCall(@PathVariable final Long id) {
+    @GetMapping("/startCall/{customerId}")
+    public ResponseEntity<Conversation> startCall(@PathVariable final Long customerId) {
 
-        final Customer customer = customerService.getCustomerById(id);
+        final Customer customer = customerService.getCustomerById(customerId);
         if (customer == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -36,12 +36,8 @@ public class ConversationController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        return ResponseEntity.ok(
-                conversationService.save(Conversation.builder()
-                        .customer(customer)
-                        .startTime(LocalDateTime.now())
-                        .build())
-        );
+        final Conversation saveConversation = new Conversation(LocalDateTime.now(), null, customer);
+        return ResponseEntity.ok(conversationService.save(saveConversation));
     }
 
     @GetMapping("/endCall/{id}")
@@ -54,7 +50,7 @@ public class ConversationController {
 
         final Conversation conversation = conversationService.getActiveCallByCustomer(customer);
         if (conversation == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         conversation.setEndTime(LocalDateTime.now());
@@ -62,15 +58,8 @@ public class ConversationController {
     }
 
     @GetMapping("/calls")
-    public ResponseEntity<List<String>> getAllFinishedCalls() {
-        final List<Conversation> finishedCalls = conversationService.getAllFinishedCalls();
-        return ResponseEntity.ok(finishedCalls.stream().map(Conversation::toString).toList());
-    }
-
-    @GetMapping("/activeCalls")
-    public ResponseEntity<List<Conversation>> getAllActiveCalls() {
-        final List<Conversation> activeCalls = conversationService.getAllActiveCalls();
-        return ResponseEntity.ok(activeCalls);
-
+    public ResponseEntity<List<String>> getAllCalls() {
+        final List<Conversation> calls = conversationService.getAllCalls();
+        return ResponseEntity.ok(calls.stream().map(Conversation::toString).toList());
     }
 }

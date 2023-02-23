@@ -22,13 +22,7 @@ public class ConversationService {
         return conversationRepository.findByCustomerAndEndTimeIsNull(customer).orElse(null);
     }
 
-    public List<Conversation> getAllFinishedCalls(){
-        return conversationRepository.findConversationByEndTimeIsNotNull();
+    public List<Conversation> getAllCalls(){
+        return conversationRepository.findAll();
     }
-
-    public List<Conversation> getAllActiveCalls(){
-        return conversationRepository.findConversationByEndTimeIsNull();
-    }
-
-
 }
